@@ -114,6 +114,11 @@
                                 </span>
                             </div>
                         </page>
+                        <page string="Offers">
+                            <div class="row container">
+                                <field name="offer_ids" />
+                            </div>
+                        </page>
                     </notebook>
                 </sheet>
             </form>
