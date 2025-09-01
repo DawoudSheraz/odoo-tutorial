@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<odoo>
+    <!--    View to customize the property form view. -->
+    <record
+            id="estate_property_form_view"
+            model="ir.ui.view"
+    >
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <h1>
+                            <field name="name" />
+                        </h1>
+                    </group>
+
+                    <div class="row container">
+                        <span class="col-6">
+                            <group>
+                                <field name="tag_ids" widget="many2many_tags"/>
+                                <field name="property_type_id" />
+                                <field name="postcode" />
+                                <field name="date_availability" />
+                            </group>
+                        </span>
+                        <span class="col-6">
+                            <group>
+                                <field name="expected_price" />
+                                <field name="selling_price" />
+                            </group>
+                        </span>
+                    </div>
+
+<!--                    notebook creates the tabbed view, with each tab encapsulated inside a page elem -->
+                    <notebook>
+                        <page string="Details">
+                            <div class="row container">
+                                <p class="col-2">Description</p>
+                                <span class="col-10">
+                                    <field name="description" />
+                                </span>
+                            </div>
+
+                            <div class="row container">
+                                <p class="col-2">Bed Rooms</p>
+                                <span class="col-10">
+                                    <field name="bedrooms" />
+                                </span>
+                            </div>
+
+                            <div class="row container">
+                                <p class="col-2">Living Areas</p>
+                                <span class="col-10">
+                                    <field name="living_areas" />
+                                </span>
+                            </div>
+
+                            <div class="row container">
+                                <p class="col-2">Facades</p>
+                                <span class="col-10">
+                                    <field name="facades" />
+                                </span>
+                            </div>
+
+                            <div class="row container">
+                                <p class="col-2">Garage</p>
+                                <span class="col-10">
+                                    <field name="garage" />
+                                </span>
+                            </div>
+
+                        </page>
+                        <page string="Garden">
+                            <div class="row container">
+                                <p class="col-2">Garden</p>
+                                <span class="col-10">
+                                    <field name="garden" />
+                                </span>
+                            </div>
+<!--   invisible can be used to hide or show fields based on other fields' value    -->
+                            <span invisible="garden == False">
+                                <div class="row container">
+                                    <p class="col-2">Garden Area</p>
+                                    <span class="col-10">
+                                        <field name="garden_area" />
+                                    </span>
+                                </div>
+                                <div class="row container">
+                                    <p class="col-2">Garden Orientation</p>
+                                    <span class="col-10">
+                                        <field name="garden_orientation" />
+                                    </span>
+                                </div>
+                                <div class="row container">
+                                    <p class="col-2">Garden Walled</p>
+                                    <span class="col-10">
+                                        <field name="garden_walled" />
+                                    </span>
+                                </div>
+                            </span>
+                        </page>
+                        <page string="Buy/Sell">
+                            <div class="row container">
+                                <p class="col-2">Buyer</p>
+                                <span class="col-10">
+                                    <field name="buyer" />
+                                </span>
+                            </div>
+                            <div class="row container">
+                                <p class="col-2">Salesperson</p>
+                                <span class="col-10">
+                                    <field name="salesperson" />
+                                </span>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

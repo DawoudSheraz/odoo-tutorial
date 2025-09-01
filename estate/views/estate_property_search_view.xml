@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<odoo>
+    <!--    Customize the search fields -->
+    <record
+            id="estate_property_search"
+            model="ir.ui.view"
+    >
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <search string="Property Search">
+                <field name="name" />
+                <field name="postcode" />
+<!--                Filter to list available properties only, garage present -->
+                <filter
+                        name="available_properties"
+                        string="Available Properties"
+                        domain="['|', ('state', '=', 'new'), ('state', '=', 'offer_received')]"
+                />
+                <filter
+                        name="garage"
+                        string="Garage Present"
+                        domain="[('garage', '=', True)]"
+                />
+<!--                Group by Post codes, if garden available-->
+                <filter name="postcodes" string="Postcodes" context="{'group_by': 'postcode'}"/>
+                <filter name="property_types" string="Property Types" context="{'group_by': 'property_type_id'}"/>
+                <separator />
+                <filter name="garden" string="Garden Availability" context="{'group_by': 'garden'}"/>
+            </search>
+        </field>
+
+    </record>
+</odoo>

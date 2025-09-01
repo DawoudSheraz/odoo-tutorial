@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!--    Defines the listing view and which model fields to display on the listing-->
+<!--    the model on record defines the Odoo's inbuilt view model that we are tweaking or adding a record to -->
+    <record
+            id="estate_property_list_view"
+            model="ir.ui.view"
+    >
+        <field name="model">estate.property</field>
+<!--       list needs to be encapsulated in field. arch is architecture. xml is the way we are defining the
+ architecture of the view. -->
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="bedrooms" />
+                <field name="state" />
+                <field name="selling_price" />
+                <field name="tag_ids" />
+                <field name="property_type_id" />
+            </list>
+        </field>
+    </record>
+</odoo>
