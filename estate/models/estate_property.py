@@ -1,4 +1,7 @@
-from odoo import fields, models
+
+from datetime import timedelta
+
+from odoo import api, fields, models
 
 class PropertyType(models.Model):
     _name="estate.property_type"
@@ -38,7 +41,7 @@ class EstateProperty(models.Model):
     expected_price = fields.Float()
     selling_price = fields.Float(readonly=True, copy=False)
     bedrooms = fields.Integer(default=2)
-    living_areas = fields.Integer()
+    living_area = fields.Float(string='Living Area(sqm)')
     facades = fields.Integer()
     garage = fields.Boolean()
     garden = fields.Boolean()
@@ -54,6 +57,73 @@ class EstateProperty(models.Model):
 
     offer_ids = fields.One2many('estate.property.offer', 'property_id')
 
+    total_area = fields.Float(compute='_compute_total_area')
+
+    best_price = fields.Float(compute='_compute_best_price', help='The best offer price', search='_search_best_price')
+
+    @api.depends('garden_area', 'living_area')
+    def _compute_total_area(self):
+        for record in self:
+            record.total_area = record.garden_area + record.living_area
+
+    @api.depends('offer_ids.price')
+    def _compute_best_price(self):
+        for record in self:
+            record.best_price = max(record.offer_ids.mapped('price'), default=0)
+
+    def _search_total_area(self, operator, value):
+        """
+        Search function to allow searching on total_area computed field
+
+        TODO: Not working as expected. self.<field> does not return any field value. It seems self is not object
+        instance and cannot really compare on the data
+        """
+        print(operator, value, self)
+        breakpoint()
+        if operator not in ['=', '!=', '>', '<', '>=', '<=']:
+            raise ValueError("Only comparison operations are allowed")
+        if not (isinstance(value, int) or isinstance(value, float)):
+            raise ValueError("Only integers and floats are allowed in the search")
+        if isinstance(value, int):
+            value = float(value)
+
+        domain = []
+
+        if self.living_area and self.garden_area:
+            domain = ['&',
+                      ('living_area', operator, value - self.garden_area),
+                      ('garden_area', operator, value - self.living_area)
+            ]
+        elif self.garden_area:
+            domain = [('garden_area', operator, value)]
+        elif self.living_area:
+            domain = [('living_area', operator, value)]
+
+        properties_ids = self.env['estate.property']._search(domain) if domain else []
+        return [('id', 'in', properties_ids)]
+
+    def _search_best_price(self, operator, value):
+        if operator not in ['=', '!=', '>', '<', '>=', '<=']:
+            raise ValueError("Only comparison operations are allowed")
+        if not (isinstance(value, int) or isinstance(value, float)):
+            raise ValueError("Only integers and floats are allowed in the search")
+        if isinstance(value, int):
+            value = float(value)
+
+        properties_ids = self.env['estate.property']._search([('offer_ids.price', operator, value)])
+        return [('id', 'in', properties_ids)]
+
+    @api.onchange('garden')
+    def _handle_garden_toggle(self):
+        if self.garden:
+            self.garden_orientation = 'north'
+            self.garden_area = 10
+        else:
+            # only reset the values if they are default, otherwise let them be
+            if self.garden_area == 10 and self.garden_orientation == 'north':
+                self.garden_area = 0
+                self.garden_orientation = ''
+
 
 class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
@@ -61,8 +131,25 @@ class EstatePropertyOffer(models.Model):
 
     price = fields.Float()
     status = fields.Selection(
-        selection=[('accepted', 'Accepted'), ('refused', 'Refused')],
+        selection=[('accepted', 'Accepted'),  ('in_review', 'In Review'), ('refused', 'Refused'),],
         copy=False
     )
     partner_id = fields.Many2one('res.partner', required=True)
     property_id = fields.Many2one('estate.property', required=True)
+
+    validity = fields.Float(help="How many days the offer is going to be valid for?", default=7)
+    deadline_date = fields.Date(compute='_compute_deadline_date', inverse='_compute_validity_from_deadline')
+
+
+    @api.depends('validity')
+    def _compute_deadline_date(self):
+        for offer in self:
+            if offer.create_date:
+                offer.deadline_date = offer.create_date + timedelta(days=offer.validity)
+
+    def _compute_validity_from_deadline(self):
+        """
+        Use inverse function to determine validity if the user selects deadline_date from UI.
+        """
+        for offer in self:
+            offer.validity = (offer.deadline_date - offer.create_date.date()).days

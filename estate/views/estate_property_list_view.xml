@@ -17,6 +17,7 @@
                 <field name="selling_price" />
                 <field name="tag_ids" />
                 <field name="property_type_id" />
+                <field name="best_price" />
             </list>
         </field>
     </record>

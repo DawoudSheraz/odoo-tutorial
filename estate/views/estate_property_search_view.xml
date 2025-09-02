@@ -10,6 +10,7 @@
             <search string="Property Search">
                 <field name="name" />
                 <field name="postcode" />
+                <field name="best_price" />
 <!--                Filter to list available properties only, garage present -->
                 <filter
                         name="available_properties"
