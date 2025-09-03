@@ -2,12 +2,16 @@
 from datetime import timedelta
 
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools import float_compare, float_is_zero
 
 
 class PropertyType(models.Model):
     _name="estate.property_type"
     _description="What sort of property"
+    _sql_constraints = [
+        ('unique_types', 'UNIQUE(name)', 'Property Types must be unique')
+    ]
 
     name = fields.Char(required=True)
 
@@ -15,6 +19,9 @@ class PropertyType(models.Model):
 class PropertyTag(models.Model):
     _name="estate.property.tag"
     _description="Property Tags"
+    _sql_constraints = [
+        ('unique_tags', 'UNIQUE(name)', 'Property tags must be unique')
+    ]
 
     name = fields.Char(required=True)
 
@@ -22,6 +29,10 @@ class PropertyTag(models.Model):
 class EstateProperty(models.Model):
     _name = "estate.property"
     _description = "Real Estate Property Listing"
+    _sql_constraints = [
+        ('positive_expected_price', 'CHECK(expected_price >=0)', 'Expected price must be positive'),
+        ('positives_elling_price', 'CHECK(selling_price >=0)', 'Selling price must be greater or equal to 0'),
+    ]
 
     name = fields.Char(help="Property listing title", required=True)
     description = fields.Text(required=True)
@@ -126,6 +137,19 @@ class EstateProperty(models.Model):
                 self.garden_area = 0
                 self.garden_orientation = ''
 
+    @api.constrains('selling_price')
+    def validate_selling_price(self):
+        for property_record in self:
+            if not float_is_zero(
+                    property_record.selling_price,
+                    precision_digits=2
+            ) and float_compare(
+                property_record.selling_price,
+                property_record.expected_price * 0.90,
+                precision_digits=2
+            ) == -1:
+                raise ValidationError("Selling price should be at least 90% of expected price")
+
     def mark_property_sold(self):
         for property in self:
             if property.state == 'cancelled':
@@ -160,6 +184,9 @@ class EstateProperty(models.Model):
 class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
     _description = 'offers made against a property'
+    _sql_constraints = [
+        ('positive_price', 'CHECK(price >= 0)', 'Price must be positive')
+    ]
 
     price = fields.Float()
     status = fields.Selection(
