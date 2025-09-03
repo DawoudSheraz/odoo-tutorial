@@ -12,6 +12,8 @@
 <!--            TODO: disabled="state.lower() == 'sold'", it is causing issues for some reason-->
                     <button type="object" name="mark_property_sold" > Sold </button>
                     <button type="object" name="mark_property_cancelled"> Cancel </button>
+<!--   Use statusbar_visible="new, offer_received, offer_accepted, sold" if we want to control which states to show -->
+                    <field name="state" readonly="True" widget="statusbar" />
                 </header>
 
                 <sheet>
@@ -23,7 +25,6 @@
                     <div class="row container">
                         <span class="col-6">
                             <group>
-                                <field name="state" readonly="True"/>
                                 <field name="tag_ids" widget="many2many_tags"/>
                                 <field name="property_type_id" />
                                 <field name="postcode" />

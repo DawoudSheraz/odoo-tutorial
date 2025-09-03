@@ -9,11 +9,13 @@ from odoo.tools import float_compare, float_is_zero
 class PropertyType(models.Model):
     _name="estate.property_type"
     _description="What sort of property"
+    _order = "sequence, name"
     _sql_constraints = [
         ('unique_types', 'UNIQUE(name)', 'Property Types must be unique')
     ]
 
     name = fields.Char(required=True)
+    sequence = fields.Integer('Sequence', default=1, help="Customize ordering, lower for high ranking")
     # This is needed to customize the form view of property type to list properties
     property_ids = fields.One2many('estate.property', 'property_type_id', string='Properties')
 
@@ -21,6 +23,7 @@ class PropertyType(models.Model):
 class PropertyTag(models.Model):
     _name="estate.property.tag"
     _description="Property Tags"
+    _order = "name"
     _sql_constraints = [
         ('unique_tags', 'UNIQUE(name)', 'Property tags must be unique')
     ]
@@ -31,6 +34,7 @@ class PropertyTag(models.Model):
 class EstateProperty(models.Model):
     _name = "estate.property"
     _description = "Real Estate Property Listing"
+    _order = "id desc"
     _sql_constraints = [
         ('positive_expected_price', 'CHECK(expected_price >=0)', 'Expected price must be positive'),
         ('positives_elling_price', 'CHECK(selling_price >=0)', 'Selling price must be greater or equal to 0'),
@@ -186,6 +190,7 @@ class EstateProperty(models.Model):
 class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
     _description = 'offers made against a property'
+    _order = "price desc"
     _sql_constraints = [
         ('positive_price', 'CHECK(price >= 0)', 'Price must be positive')
     ]

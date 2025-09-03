@@ -9,6 +9,11 @@
                         <field name="name"/>
                     </h1>
                 </header>
+                <p>
+                    <group>
+                        <field name="sequence" readonly="True" />
+                    </group>
+                </p>
                 <sheet>
                     <notebook>
                         <page string="Properties">
