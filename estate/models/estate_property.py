@@ -14,6 +14,8 @@ class PropertyType(models.Model):
     ]
 
     name = fields.Char(required=True)
+    # This is needed to customize the form view of property type to list properties
+    property_ids = fields.One2many('estate.property', 'property_type_id', string='Properties')
 
 
 class PropertyTag(models.Model):
