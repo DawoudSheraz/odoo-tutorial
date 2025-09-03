@@ -8,16 +8,22 @@
         <field name="model">estate.property</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+<!--            TODO: disabled="state.lower() == 'sold'", it is causing issues for some reason-->
+                    <button type="object" name="mark_property_sold" > Sold </button>
+                    <button type="object" name="mark_property_cancelled"> Cancel </button>
+                </header>
+
                 <sheet>
                     <group>
                         <h1>
                             <field name="name" />
                         </h1>
                     </group>
-
                     <div class="row container">
                         <span class="col-6">
                             <group>
+                                <field name="state" readonly="True"/>
                                 <field name="tag_ids" widget="many2many_tags"/>
                                 <field name="property_type_id" />
                                 <field name="postcode" />
@@ -60,9 +66,7 @@
                             </group>
                         </page>
                         <page string="Offers">
-                            <group>
-                                <field name="offer_ids" />
-                            </group>
+                            <field name="offer_ids" />
                         </page>
                     </notebook>
                 </sheet>

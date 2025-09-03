@@ -11,9 +11,11 @@ from property and not via a dedicated menu. -->
             <list>
                 <field name="price" />
                 <field name="partner_id" />
-                <field name="status" />
                 <field name="validity"/>
                 <field name="deadline_date" />
+                <field name="status" />
+                <button type="object" name="mark_offer_accepted" icon="fa-check" string="Accept"/>
+                <button type="object" name="mark_offer_refused" icon="fa-close" string="Refuse"/>
             </list>
         </field>
     </record>

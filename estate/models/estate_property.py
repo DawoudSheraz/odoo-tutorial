@@ -2,6 +2,8 @@
 from datetime import timedelta
 
 from odoo import api, fields, models
+from odoo.exceptions import UserError
+
 
 class PropertyType(models.Model):
     _name="estate.property_type"
@@ -124,6 +126,36 @@ class EstateProperty(models.Model):
                 self.garden_area = 0
                 self.garden_orientation = ''
 
+    def mark_property_sold(self):
+        for property in self:
+            if property.state == 'cancelled':
+                raise UserError('Cancelled Properties cannot be sold')
+            property.state = 'sold'
+        return True
+
+    def mark_property_cancelled(self):
+        for property in self:
+            if property.state == 'sold':
+                raise UserError('Sold Properties cannot be cancelled')
+            property.state = 'cancelled'
+        return True
+
+    def _set_buyer_details(self, buyer, price):
+        self.selling_price = price
+        self.buyer = buyer
+
+    def _reject_offers_on_acceptance(self, accepted_offer):
+        """
+        When an offer on a property is accepted, reject or refuse the remaining offers.
+
+        TODO: Use ORM way to do this. I tried self.search([(offer_ids, not in, accepted_offer.id)]) but it returns
+        all the properties that do not have this offer.
+        """
+        for offer in self.offer_ids:
+            if offer.id == accepted_offer.id:
+                continue
+            offer.mark_offer_refused()
+
 
 class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
@@ -152,4 +184,21 @@ class EstatePropertyOffer(models.Model):
         Use inverse function to determine validity if the user selects deadline_date from UI.
         """
         for offer in self:
-            offer.validity = (offer.deadline_date - offer.create_date.date()).days
+            if offer.deadline_date:
+                offer.validity = (offer.deadline_date - offer.create_date.date()).days
+
+    def mark_offer_accepted(self):
+        for offer in self:
+            if offer.status == 'refused':
+                raise UserError("Refused Offers cannot be accepted")
+            offer.status = 'accepted'
+            offer.property_id._set_buyer_details(offer.partner_id, offer.price)
+            offer.property_id._reject_offers_on_acceptance(self)
+        return True
+
+    def mark_offer_refused(self):
+        for offer in self:
+            if offer.status == 'accepted':
+                raise UserError("Accepted Offers cannot be refused")
+            offer.status = 'refused'
+        return True
