@@ -10,8 +10,8 @@
             <form>
                 <header>
 <!--            TODO: disabled="state.lower() == 'sold'", it is causing issues for some reason-->
-                    <button type="object" name="mark_property_sold" > Sold </button>
-                    <button type="object" name="mark_property_cancelled"> Cancel </button>
+                    <button type="object" name="mark_property_sold" invisible="state == 'sold'"> Sold </button>
+                    <button type="object" name="mark_property_cancelled" invisible="state == 'sold'"> Cancel </button>
 <!--   Use statusbar_visible="new, offer_received, offer_accepted, sold" if we want to control which states to show -->
                     <field name="state" readonly="True" widget="statusbar" />
                 </header>
@@ -25,8 +25,8 @@
                     <div class="row container">
                         <span class="col-6">
                             <group>
-                                <field name="tag_ids" widget="many2many_tags"/>
-                                <field name="property_type_id" />
+                                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                <field name="property_type_id" options="{'no_create': 'True', 'no_open': 'True'}"/>
                                 <field name="postcode" />
                                 <field name="date_availability" />
                             </group>
@@ -67,7 +67,7 @@
                             </group>
                         </page>
                         <page string="Offers">
-                            <field name="offer_ids" />
+                            <field name="offer_ids" readonly="state in ['offer_accepted', 'sold', 'cancelled']"/>
                         </page>
                     </notebook>
                 </sheet>

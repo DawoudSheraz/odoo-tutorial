@@ -29,6 +29,8 @@ class PropertyTag(models.Model):
     ]
 
     name = fields.Char(required=True)
+    # color is populated by the many2many_tags widget
+    color = fields.Integer()
 
 
 class EstateProperty(models.Model):
@@ -173,6 +175,7 @@ class EstateProperty(models.Model):
     def _set_buyer_details(self, buyer, price):
         self.selling_price = price
         self.buyer = buyer
+        self.state = 'offer_accepted'
 
     def _reject_offers_on_acceptance(self, accepted_offer):
         """
