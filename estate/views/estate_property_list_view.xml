@@ -10,7 +10,12 @@
 <!--       list needs to be encapsulated in field. arch is architecture. xml is the way we are defining the
  architecture of the view. -->
         <field name="arch" type="xml">
-            <list>
+            <list
+                    decoration-success="state in ['offer_received', 'offer_accepted']"
+                    decoration-bf="state == 'offer_accepted'"
+                    decoration-muted="state == 'cancelled'"
+                    decoration-primary="state == 'sold'"
+            >
                 <field name="name" />
                 <field name="bedrooms" />
                 <field name="state" />
@@ -18,6 +23,7 @@
                 <field name="tag_ids" />
                 <field name="property_type_id" />
                 <field name="best_price" />
+                <field name="date_availability" optional="hide"/>
             </list>
         </field>
     </record>
