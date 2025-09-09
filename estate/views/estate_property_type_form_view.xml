@@ -15,6 +15,26 @@
                     </group>
                 </p>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                    <button
+                            class="oe_stat_button"
+                            type="action"
+                            name="%(estate_property_offer_action)d"
+                            icon="fa-money"
+                    >
+<!--                        We need to wrap the button in button tax, add appropriate info, value, and text classes on values and labels for smart buttons-->
+                        <span class="o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="offer_count"/>
+                            </span>
+                            <span class="o_stat_text">
+                                Offers
+                            </span>
+                        </span>
+
+                    </button>
+                    </div>
+
                     <notebook>
                         <page string="Properties">
                             <field name="property_ids" >

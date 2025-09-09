@@ -11,6 +11,7 @@
                 <field name="name" />
                 <field name="postcode" />
                 <field name="best_price" />
+                <field name="living_area" filter_domain="[('living_area', '&gt;=', self)]"/>
 <!--                Filter to list available properties only, garage present -->
                 <filter
                         name="available_properties"

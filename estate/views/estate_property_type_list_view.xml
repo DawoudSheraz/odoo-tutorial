@@ -10,6 +10,8 @@
 <!--   Sequence with handle widget allows Drag and drop of ordering of objects which changes the sequence-->
                 <field name="sequence" widget="handle" />
                 <field name="name" />
+                <field name="offer_ids" />
+                <field name="offer_count" />
             </list>
         </field>
     </record>

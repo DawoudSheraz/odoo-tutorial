@@ -19,6 +19,14 @@ class PropertyType(models.Model):
     # This is needed to customize the form view of property type to list properties
     property_ids = fields.One2many('estate.property', 'property_type_id', string='Properties')
 
+    offer_ids = fields.One2many('estate.property.offer', 'property_type_id', string='Offers')
+
+    offer_count = fields.Integer(compute='_compute_offers_count')
+
+    def _compute_offers_count(self):
+        for property_type in self:
+            property_type.offer_count = len(property_type.offer_ids)
+
 
 class PropertyTag(models.Model):
     _name="estate.property.tag"
@@ -208,6 +216,8 @@ class EstatePropertyOffer(models.Model):
 
     validity = fields.Float(help="How many days the offer is going to be valid for?", default=7)
     deadline_date = fields.Date(compute='_compute_deadline_date', inverse='_compute_validity_from_deadline')
+
+    property_type_id = fields.Many2one(related='property_id.property_type_id', store=True)
 
 
     @api.depends('validity')
