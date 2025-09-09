@@ -1,9 +1,13 @@
 
+import logging
 from datetime import timedelta
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_compare, float_is_zero
+
+
+logger = logging.getLogger(__name__)
 
 
 class PropertyType(models.Model):
@@ -197,6 +201,17 @@ class EstateProperty(models.Model):
                 continue
             offer.mark_offer_refused()
 
+    @api.ondelete(at_uninstall=False)
+    def handle_property_deletion(self):
+        """
+        Verify the property meets the criteria for deletion
+        """
+        for property in self:
+            if property.state in ['offer_received', 'offer_accepted', 'sold']:
+                raise UserError(
+                    f"Property {property.name} cannot be deleted. Only new or cancelled properties can be deleted"
+                )
+
 
 class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
@@ -249,3 +264,24 @@ class EstatePropertyOffer(models.Model):
                 raise UserError("Accepted Offers cannot be refused")
             offer.status = 'refused'
         return True
+
+    @api.model
+    def create(self, vals):
+        try:
+            property = self.env['estate.property'].browse(vals['property_id'])
+        except:
+            logger.exception("Unable to locate the property")
+            raise
+        price = vals['price']
+
+        # locate if any offer below or equal to entered price exists. If not, the current entered price is lowest
+        # and is not allowed
+        lower_price_offers = self.env['estate.property.offer'].search_count(
+            ['&', ('property_id', '=', property.id), ('price', '<=', price)]
+        )
+
+        if lower_price_offers == 0:
+            raise UserError(f"Unable to create an offer with lower price than existing offers")
+
+        property.state = 'offer_received'
+        return super().create(vals)
