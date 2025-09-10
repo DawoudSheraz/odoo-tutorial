@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="res_users_inherited_view" model="ir.ui.view">
+        <field name="model">res.users</field>
+<!--        inherit_id and ref to base view tells Odoo which view to inherit and extend -->
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <notebook>
+                <page string="Properties">
+                    <field name="property_ids"/>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>
