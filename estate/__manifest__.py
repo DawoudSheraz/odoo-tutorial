@@ -2,6 +2,7 @@
     'name': 'Real Estate',
     'version': '1.0',
     'summary': 'Manage Real Estate listings',
+    'application': True,
     'depends': [
         'base',
     ],
