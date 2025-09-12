@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="estate_property_kanban_view" model="ir.ui.view">
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <kanban
+                    default_group_by="property_type_id"
+                    groups_draggable="False"
+                    group_create="False"
+            >
+<!--                This helps access the values below, i.e. we dont' want state to be displayed but we need it to reference-->
+                <field name="state" />
+                <field name="offer_ids" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div>
+                            <field name="name" />
+                            <field name="tag_ids" />
+                            <span>
+                                <span>Expected Price </span>
+                                <field name="expected_price" />
+                            </span>
+                            <div t-if="record.state.raw_value == 'offer_accepted'">
+                                <span>
+                                    <span>Selling Price </span>
+                                    <field name="selling_price" />
+                                </span>
+                            </div>
+
+                            <div t-if="record.offer_ids.value.length != 0">
+                                <span>
+                                    <span>Best Price </span>
+                                    <field name="best_price" />
+                                </span>
+                            </div>
+
+<!--                            Displaying each fields on record -->
+<!--                            <ul>-->
+<!--                              <t t-foreach="record" t-as="fld">-->
+<!--                                <li>-->
+<!--                                  <t t-out="fld"/> : <t t-out="fld.value"/>-->
+<!--                                </li>-->
+<!--                              </t>-->
+<!--                            </ul>-->
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+
+    </record>
+</odoo>

@@ -15,3 +15,14 @@ Once Odoo is cloned, clone this repository as a sibling of odoo directory. Make 
 
 * Once the command completes, access the server on http://localhost:8069/.
 * Enable estate app from Apps section. Once re-loaded, you should be able to interact with estate apps
+
+TODOs
+=======
+
+- Do not allow selling if there are no offers
+- Add Transaction checks on Invoice creation if property is sold
+- Update _reject_offers_on_acceptance method to do the rejection using ORM methods instead of manual looping in invidual objects
+- Add Smart Button to show Invoice of a sold property
+- Add Unit tests
+- Create empty/shell product when a property is sold and link the product with invoice
+-

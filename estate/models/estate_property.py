@@ -280,7 +280,7 @@ class EstatePropertyOffer(models.Model):
             ['&', ('property_id', '=', property.id), ('price', '<=', price)]
         )
 
-        if lower_price_offers == 0:
+        if lower_price_offers == 0 and property.offer_ids:
             raise UserError(f"Unable to create an offer with lower price than existing offers")
 
         property.state = 'offer_received'

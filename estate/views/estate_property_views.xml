@@ -7,8 +7,9 @@
     >
         <field name="name">Properties</field>
         <field name="res_model">estate.property</field>
-        <field name="view_mode">list,form</field>
-        <field name="context">{'search_default_available_properties': True}</field>
+        <field name="view_mode">list,form,kanban</field>
+<!--        Enable the following to set the default filter for properties-->
+        <field name="context">{'search_default_available_properties': False}</field>
     </record>
 
     <record
